@@ -1,12 +1,12 @@
 {
   "domain": "hass_mcp_plus",
   "name": "Home Assistant Advanced MCP Integration",
-  "codeowners": ["@yourusername"],
+  "codeowners": ["@bluebitnetworks"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/yourusername/hass-mcp-plus",
+  "documentation": "https://github.com/bluebitnetworks/hass-mcp-plus",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/yourusername/hass-mcp-plus/issues",
+  "issue_tracker": "https://github.com/bluebitnetworks/hass-mcp-plus/issues",
   "requirements": [
     "cryptography>=36.0.0",
     "pyjwt>=2.3.0",

@@ -35,7 +35,7 @@ A comprehensive Model Context Protocol (MCP) server integration for Home Assista
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/hass-mcp-plus.git
+   git clone https://github.com/bluebitnetworks/hass-mcp-plus.git
    cd hass-mcp-plus
    ```
 
@@ -65,7 +65,7 @@ A comprehensive Model Context Protocol (MCP) server integration for Home Assista
 1. Make sure [HACS](https://hacs.xyz/) is installed in your Home Assistant instance
 2. Add this repository as a custom repository in HACS:
    - Go to HACS → Integrations → ⋮ → Custom repositories
-   - Add `https://github.com/yourusername/hass-mcp-plus` with category "Integration"
+   - Add `https://github.com/bluebitnetworks/hass-mcp-plus` with category "Integration"
 3. Install the "Home Assistant Advanced MCP Integration" from HACS
 4. Restart Home Assistant
 5. Add the integration via the UI:
@@ -252,7 +252,7 @@ requests.post(
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/hass-mcp-plus.git
+   git clone https://github.com/bluebitnetworks/hass-mcp-plus.git
    cd hass-mcp-plus
    ```
 
