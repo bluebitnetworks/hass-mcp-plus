@@ -1,0 +1,161 @@
+Windsurf IDE Cascade Rules: Home Assistant MCP Server
+Project Overview
+This project implements a Model Context Protocol (MCP) server that connects to Home Assistant for smart home control via AI interfaces like Claude. The server exposes Home Assistant entities as resources and provides tools for device control.
+File Structure
+home-assistant-mcp/
+├── server.py             # Main MCP server implementation
+├── Dockerfile            # Container configuration
+├── requirements.txt      # Python dependencies
+├── docker-compose.yml    # Docker deployment configuration
+├── cloudflare-setup.sh   # Cloudflare Tunnel setup script
+└── README.md             # Project documentation
+Windsurf AI Flow Rules
+General Rules
+
+Code Generation
+
+Generate Python code following PEP 8 style guidelines
+Include comprehensive docstrings in all functions and classes
+Use type hints for all function parameters and return types
+Implement proper error handling with specific exception messages
+
+
+Naming Conventions
+
+Use snake_case for functions, variables, and module names
+Use PascalCase for class names
+Prefix private methods and variables with underscore (_)
+Use descriptive names that clearly indicate purpose
+
+
+Code Organization
+
+Group related functions and classes together
+Place configuration constants at the top of files
+Organize imports in the standard order: standard library, third-party, local
+
+
+
+MCP Server Implementation
+
+Resource Handlers
+
+Validate all URIs before processing
+Implement proper error handling for API calls
+Use consistent JSON formatting for response data
+Cache responses when appropriate to improve performance
+
+
+Tool Implementations
+
+Validate all input parameters before processing
+Return detailed error messages for failed operations
+Avoid performing potentially dangerous operations without confirmation
+Sanitize all output to prevent information leakage
+
+
+Home Assistant API Integration
+
+Use connection pooling for API requests
+Implement retry logic for transient errors
+Handle API rate limiting appropriately
+Validate API responses before processing
+
+
+
+Cloud Deployment
+
+Docker Configuration
+
+Use the latest stable Python base image
+Minimize image size by removing unnecessary files
+Set appropriate user permissions (non-root)
+Configure health checks for monitoring
+
+
+Security Requirements
+
+Store sensitive credentials as environment variables
+Implement proper SSL/TLS for all connections
+Add appropriate authentication for API endpoints
+Regularly rotate access tokens
+
+
+
+Testing Requirements
+
+Unit Tests
+
+Write unit tests for all functions and methods
+Mock external API calls in tests
+Test error handling paths
+Achieve at least 80% code coverage
+
+
+Integration Tests
+
+Test end-to-end flows with mocked Home Assistant endpoints
+Verify all tool implementations function correctly
+Test with various resource types and tool parameters
+Validate proper error handling for API failures
+
+
+
+Documentation Guidelines
+
+Code Documentation
+
+Include docstrings for all public functions and classes
+Document parameters, return values, and exceptions
+Include usage examples in docstrings
+Add comments for complex logic
+
+
+Project Documentation
+
+Maintain up-to-date installation instructions
+Document configuration options and environment variables
+Include troubleshooting guides
+Provide examples of common usage patterns
+
+
+
+Development Workflow
+
+Version Control
+
+Create feature branches for new functionality
+Write descriptive commit messages
+Request code reviews before merging
+Tag releases with semantic versioning
+
+
+Code Quality
+
+Run linters (flake8, pylint) before committing
+Use type checking with mypy
+Format code with black
+Resolve all warnings before merging
+
+
+
+Performance Guidelines
+
+Resource Optimization
+
+Minimize memory usage in long-running processes
+Implement connection pooling for external APIs
+Use async/await for I/O-bound operations
+Implement appropriate timeouts for all operations
+
+
+Scaling Considerations
+
+Design for horizontal scaling
+Implement proper logging for debugging
+Consider rate limiting for public endpoints
+Cache frequently accessed resources
+
+
+
+These rules are designed to ensure the Home Assistant MCP server is robust, secure, and maintainable while following best practices for Windsurf IDE Cascade development.

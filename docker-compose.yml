@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # Main MCP server that integrates with Home Assistant
+  hass-mcp-plus:
+    container_name: hass-mcp-plus
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./config:/config
+      - ./data:/data
+      - ./plugins:/plugins
+    ports:
+      - "8787:8787"  # MCP Server API
+    environment:
+      - HASS_URL=http://homeassistant:8123
+      - HASS_TOKEN=${HASS_TOKEN}
+      - LOG_LEVEL=INFO
+      - TZ=${TZ:-UTC}
+      - ENABLE_SSL=${ENABLE_SSL:-false}
+      - SSL_CERT_PATH=${SSL_CERT_PATH:-/config/ssl/cert.pem}
+      - SSL_KEY_PATH=${SSL_KEY_PATH:-/config/ssl/key.pem}
+      # LLM Configuration
+      - LLM_PROVIDER=${LLM_PROVIDER:-local}  # local, ollama, openai, anthropic
+      - LLM_URL=${LLM_URL:-http://llm:8000}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_MODEL=${LLM_MODEL:-llama3}
+      # Feature flags
+      - ENABLE_RAG=${ENABLE_RAG:-true}
+      - ENABLE_DASHBOARD_GEN=${ENABLE_DASHBOARD_GEN:-true}
+      - ENABLE_AUTOMATION_GEN=${ENABLE_AUTOMATION_GEN:-true}
+      - ENABLE_VOICE_PROCESSING=${ENABLE_VOICE_PROCESSING:-false}
+      - ENABLE_IMAGE_PROCESSING=${ENABLE_IMAGE_PROCESSING:-false}
+    depends_on:
+      - vector-db
+      - llm
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8787/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - hass-mcp-network
+
+  # Vector database for RAG functionality
+  vector-db:
+    container_name: hass-mcp-vector-db
+    image: chromadb/chroma:latest
+    volumes:
+      - ./data/vectordb:/chroma/data
+    ports:
+      - "8000:8000"  # Only expose if needed for debugging
+    environment:
+      - CHROMA_DB_IMPL=duckdb+parquet
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+  
+  # Embedding model service for RAG
+  embedding-model:
+    container_name: hass-mcp-embedding
+    build:
+      context: ./server/embedding
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"  # Only expose if needed for debugging
+    environment:
+      - MODEL_NAME=all-MiniLM-L6-v2
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+
+  # LLM service (using Ollama as default, can be replaced with other LLM services)
+  llm:
+    container_name: hass-mcp-llm
+    image: ollama/ollama:latest
+    volumes:
+      - ./data/ollama:/root/.ollama
+    ports:
+      - "11434:11434"  # Only expose if needed for direct access
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              count: all
+              driver: nvidia
+  
+  # Web UI for interacting with the MCP server
+  web-ui:
+    container_name: hass-mcp-webui
+    build:
+      context: ./webui
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Web UI port
+    environment:
+      - API_URL=http://hass-mcp-plus:8787
+    depends_on:
+      - hass-mcp-plus
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+  
+  # Optional: Log aggregation and monitoring
+  monitoring:
+    container_name: hass-mcp-monitoring
+    image: prom/prometheus:latest
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+      - ./data/prometheus:/prometheus
+    ports:
+      - "9090:9090"  # Only expose if needed for debugging
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+
+  # Optional: Background worker for heavy tasks
+  worker:
+    container_name: hass-mcp-worker
+    build:
+      context: ./server
+      dockerfile: Dockerfile.worker
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+  
+  # Optional: Redis for task queue and caching
+  redis:
+    container_name: hass-mcp-redis
+    image: redis:alpine
+    volumes:
+      - ./data/redis:/data
+    restart: unless-stopped
+    networks:
+      - hass-mcp-network
+
+networks:
+  hass-mcp-network:
+    driver: bridge

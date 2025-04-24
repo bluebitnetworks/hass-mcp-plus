@@ -1,0 +1,23 @@
+{
+  "domain": "hass_mcp_plus",
+  "name": "Home Assistant Advanced MCP Integration",
+  "codeowners": ["@yourusername"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/yourusername/hass-mcp-plus",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/yourusername/hass-mcp-plus/issues",
+  "requirements": [
+    "cryptography>=36.0.0",
+    "pyjwt>=2.3.0",
+    "pydantic>=1.9.0",
+    "aiohttp>=3.8.1",
+    "uvicorn>=0.17.0",
+    "fastapi>=0.75.0",
+    "python-multipart>=0.0.5",
+    "chromadb>=0.4.6",
+    "sentence-transformers>=2.2.2"
+  ],
+  "version": "1.0.0",
+  "integration_type": "integration"
+}
